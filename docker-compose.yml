@@ -1,0 +1,95 @@
+services:
+  #----------------------------------------------------------------
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+    container_name: ${NODE_NAME}01-c
+    environment:
+      - node.name=${NODE_NAME}01
+      - cluster.name=${CLUSTER_NAME}
+      - discovery.seed_hosts=${NODE_NAME}02,${NODE_NAME}03
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - cluster.initial_master_nodes=${NODE_NAME}01,${NODE_NAME}02,${NODE_NAME}03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:${DATA_PATH}
+    ports:
+      - ${ES_PORT}:9200
+    networks:
+      - elastic
+  #----------------------------------------------------------------
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+    container_name: ${NODE_NAME}02-c
+    environment:
+      - node.name=${NODE_NAME}02
+      - cluster.name=${CLUSTER_NAME}
+      - discovery.seed_hosts=${NODE_NAME}01,${NODE_NAME}03
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - cluster.initial_master_nodes=${NODE_NAME}01,${NODE_NAME}02,${NODE_NAME}03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data02:${DATA_PATH}
+    networks:
+      - elastic
+  #----------------------------------------------------------------
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+    container_name: ${NODE_NAME}03-c
+    environment:
+      - node.name=${NODE_NAME}03
+      - cluster.name=${CLUSTER_NAME}
+      - discovery.seed_hosts=${NODE_NAME}01,${NODE_NAME}02
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - cluster.initial_master_nodes=${NODE_NAME}01,${NODE_NAME}02,${NODE_NAME}03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data03:${DATA_PATH}
+    networks:
+      - elastic
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${KIBANA_VERSION}
+    container_name: kibana-c
+    environment:
+      - SERVERNAME=kibana
+      - SERVER_HOST=0.0.0.0
+      - ELASTICSEARCH_HOSTS=["http://${NODE_NAME}01:9200","http://${NODE_NAME}02:9200","http://${NODE_NAME}03:9200"]      
+      - ELASTICSEARCH_USERNAME=${ELASTIC_USERNAME}
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
+      - XPACK_MONITORING_ENABLED=true
+      - XPACK_MONITORING_COLLECTION_ENABLED=true
+      - XPACK_SECURITY_ENABLED=true
+    ports:
+      - ${KIBANA_PORT}:5601
+    depends_on:
+      - es01
+    networks:
+      - elastic
+
+#----------------------------------------------------------------
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local
+
+networks:
+  elastic:
+    driver: ${NETWORK_DRIVER}
