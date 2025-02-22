@@ -1,7 +1,7 @@
 services:
   #----------------------------------------------------------------
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+    image: elasticsearch:${ES_VERSION}
     container_name: ${NODE_NAME}01-c
     environment:
       - node.name=${NODE_NAME}01
@@ -23,7 +23,7 @@ services:
       - elastic
   #----------------------------------------------------------------
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+    image: elasticsearch:${ES_VERSION}
     container_name: ${NODE_NAME}02-c
     environment:
       - node.name=${NODE_NAME}02
@@ -43,7 +43,7 @@ services:
       - elastic
   #----------------------------------------------------------------
   es03:
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+    image: elasticsearch:${ES_VERSION}
     container_name: ${NODE_NAME}03-c
     environment:
       - node.name=${NODE_NAME}03
@@ -63,7 +63,7 @@ services:
       - elastic
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:${KIBANA_VERSION}
+    image: kibana:${KIBANA_VERSION}
     container_name: kibana-c
     environment:
       - SERVERNAME=kibana

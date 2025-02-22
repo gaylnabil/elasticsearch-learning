@@ -3,7 +3,7 @@ GET _cat/indices?v&pretty
 
 # add new record(document) in 'product' index
 POST product/_doc/100
-{ "title": "MSI Steath 15", "description": "This is a MSI workstation", "quantity": 4, "price": 25999.99 }
+{ "title": "X-MSI Steath 15 laptop", "description": "This is a MSI workstation", "quantity": 4, "price": 25999.99 }
 
 # add new record(document) in 'product' index
 POST product/_doc/101
@@ -20,6 +20,8 @@ POST _bulk
 { "title": "Dell Laptop", "description": "This is a dell laptop game", "quantity": 11, "price": 12000.50 }
 { "index" : { "_index" : "product", "_id": 103 } }
 { "title": "HP Laptop", "description": "This is a HP laptop game", "quantity": 5, "price": 10500 }
+{ "index" : { "_index" : "product", "_id": 104 } }
+{ "title": "AlienWare workstaion C-33", "description": "AlienWare workstation-C33", "quantity": 25, "price": 35000.99 }
 
 GET product
 
@@ -30,11 +32,48 @@ GET /_all/_search?q=title:a*
 
 GET product/_search
 {
+  "size": 20, 
+  "from": 0, 
   "query": {
-    "match": {
-      "_id": "101"
+    "match_phrase": {
+      "description": "This is a laptop"
     }
   }
+}
+
+# Query DSL= Domain Specific Langauge
+GET product/_search
+{
+  "size": 20, 
+  "from": 0, 
+  "query": {
+    "match_phrase": {
+      "description": {
+        "query": "This laptop",
+        "slop": 4 # slop is distance between words in query
+      }
+    }
+  }
+}
+
+# sorting product ASC/DESC
+GET product/_search
+{
+  "size": 20, 
+  "from": 0, 
+  "query": {
+    "query_string": {
+      "default_field": "title",
+      "query": "*"
+    }
+  },
+    "sort": [
+    {
+      "title.keyword": {
+        "order": "desc"
+      }
+    }
+  ]
 }
 
 GET product/_count
