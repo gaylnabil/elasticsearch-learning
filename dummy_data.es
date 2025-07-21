@@ -3,11 +3,11 @@ GET _cat/indices?v&pretty
 
 # add new record(document) in 'product' index
 POST product/_doc/100
-{ "title": "X-MSI Steath 15", "description": "This is a MSI workstation", "quantity": 4, "price": 25999.99, "computer_type": "Laptop" }
+{ "title": "X-MSI Steath 15", "description": "This is a MSI workstation", "quantity": 4, "price": 25999.99, "computer_type": "Laptop", "created_at": "11/12/2022" }
 
 # add new record(document) in 'product' index
 POST product/_doc/101
-{ "title": "AlienWare A-11", "description": "This is a AlienWare workstation", "quantity": 4, "price": 14959.99, "computer_type": "Desktop" }
+{ "title": "AlienWare A-11", "description": "This is a AlienWare workstation", "quantity": 4, "price": 14959.99, "computer_type": "Desktop", "created_at": "05/25/2023" }
 
 
 # update record(document) in 'product' index with specific '_id', ex: id="100"
